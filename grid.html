@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumanth's Surprise!!</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            margin-top: 30px;
+        }
+        
+        .form-label {
+            font-weight: bold;
+        }
+        
+        #imageCanvas {
+            border: 1px solid #6c757d;
+            margin-top: 20px;
+        }
+        
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            /* Optional: Rounded corners */
+            transition: all 0.3s ease-in-out;
+            margin: 30px;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
+            /* Hover effect for better UX */
+        }
+        
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card ">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h2>Sonu's Magic Grid liner!</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="gridForm">
+                            <div class="row mb-3">
+                                <label for="imageInput" class="form-label">Choose an Image</label>
+                                <input type="file" class="form-control" id="imageInput" accept="image/*">
+                            </div>
+                            <!-- <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="canvasWidth" class="form-label">Canvas Width (cm)</label>
+                                    <input type="number" class="form-control" id="canvasWidth" placeholder="Enter width in cm" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="canvasHeight" class="form-label">Canvas Height (cm)</label>
+                                    <input type="number" class="form-control" id="canvasHeight" placeholder="Enter height in cm" required>
+                                </div>
+                            </div> -->
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <label for="gridWidth" class="form-label">Grid Box Width (cm)</label>
+                                    <input type="number" class="form-control" id="gridWidth" placeholder="Enter grid width in cm" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="gridHeight" class="form-label">Grid Box Height (cm)</label>
+                                    <input type="number" class="form-control" id="gridHeight" placeholder="Enter grid height in cm" required>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <label for="gridColor" class="form-label">Grid Color</label>
+                                    <input type="color" class="form-control form-control-color" id="gridColor" value="#ff0000">
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="button" class="btn btn-primary w-100" onclick="drawGrid()">Generate Grid</button>
+                                </div>
+                            </div>
+                        </form>
+                        <canvas id="imageCanvas" class="mt-4"></canvas>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h3>Designed By Sumanth N</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        let img = new Image();
+
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        drawImageOnCanvas();
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function drawImageOnCanvas() {
+            // const canvasWidthCm = parseFloat(document.getElementById('canvasWidth').value);
+            // const canvasHeightCm = parseFloat(document.getElementById('canvasHeight').value);
+
+            // if (isNaN(canvasWidthCm) || isNaN(canvasHeightCm)) {
+            //     alert("Please enter valid canvas dimensions.");
+            //     return;
+            // }
+
+            const dpi = 96; // Assume 96 DPI (dots per inch)
+            const cmToPixels = dpi / 2.54; // Convert cm to pixels
+
+            // Convert canvas dimensions from cm to pixels
+            const canvasWidthPx = canvasWidthCm * cmToPixels;
+            const canvasHeightPx = canvasHeightCm * cmToPixels;
+
+            // Set canvas size
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Clear the canvas and draw the image
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+
+        function drawGrid() {
+            const gridWidthCm = parseFloat(document.getElementById('gridWidth').value);
+            const gridHeightCm = parseFloat(document.getElementById('gridHeight').value);
+            const gridColor = document.getElementById('gridColor').value;
+
+            if (isNaN(gridWidthCm) || isNaN(gridHeightCm)) {
+                alert("Please enter valid measurements for grid boxes.");
+                return;
+            }
+
+            const dpi = 96; // Assume 96 DPI (dots per inch)
+            const cmToPixels = dpi / 2.54; // Convert cm to pixels
+
+            const gridWidthPx = gridWidthCm * cmToPixels;
+            const gridHeightPx = gridHeightCm * cmToPixels;
+
+            // Redraw the image on the canvas
+            drawImageOnCanvas();
+
+            // Set the color for the grid
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 1;
+            ctx.font = "16px Arial";
+            ctx.fillStyle = gridColor;
+
+            // Draw grid lines and numbers
+            let rowNumber = 0;
+            let colNumber = 0;
+
+            // Vertical lines and column numbers
+            for (let x = gridWidthPx; x <= canvas.width; x += gridWidthPx) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+
+                // Number the columns at the top of each box, starting from 0
+                colNumber = Math.floor(x / gridWidthPx) - 1;
+                ctx.fillText(colNumber, x - gridWidthPx / 2, 20); // Adjust text positioning
+            }
+
+            // Horizontal lines and row numbers
+            for (let y = gridHeightPx; y <= canvas.height; y += gridHeightPx) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+
+                // Number the rows on the left side of each box, starting from 0
+                rowNumber = Math.floor(y / gridHeightPx) - 1;
+                ctx.fillText(rowNumber, 10, y - gridHeightPx / 2); // Adjust text positioning
+            }
+        }
+    </script>
+
+</body>
+
+</html>
